@@ -1,0 +1,25 @@
+{
+  "name": "authentication-practice",
+  "version": "1.0.0",
+  "description": "Just doing Authentication practice",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "Ayush Rawat",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prettier": "^3.8.4"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mailgen": "^2.0.34",
+    "mongoose": "^9.7.1",
+    "nodemailer": "^9.0.1"
+  }
+}
