@@ -93,4 +93,17 @@ userSchema.methods.generateAccessToken = async function () {
     )
 }
 
+userSchema.methods.generateTemporaryToken = async function () {
+    const unHashedToken = crypto.randomBytes(20).toString("hex");
+
+    const hashedToken = crypto
+        .createHash("sha256")
+        .update(unHashedToken)
+        .digest("hex");
+
+    const tokenExpiry = Date.now() + 20*60*1000
+
+    return { unHashedToken, hashedToken, tokenExpiry }
+}
+
 export const User = new mongoose.model("User", userSchema);
