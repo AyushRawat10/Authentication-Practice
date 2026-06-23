@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 const userSchema = new Schema({
   email: {
@@ -22,7 +23,6 @@ const userSchema = new Schema({
 
   fullName: {
     type: String,
-    required: true,
   }, 
 
   password: {
@@ -60,19 +60,18 @@ const userSchema = new Schema({
 }
 );
 
-userSchema.pre("save", async function(next) {
-    if(!this.isModified("password")) return next();
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return;
 
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-})
+  this.password = await bcrypt.hash(this.password, 10);
+});
 
 userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password);
 }
 
-userSchema.methods.generateRefreshToken = async function () {
-    jwt.sign(
+userSchema.methods.generateRefreshToken = function () {
+    return jwt.sign(
         {
             _id: this._id
         },
@@ -81,8 +80,8 @@ userSchema.methods.generateRefreshToken = async function () {
     )
 }
 
-userSchema.methods.generateAccessToken = async function () {
-    jwt.sign(
+userSchema.methods.generateAccessToken = function () {
+    return jwt.sign(
         {
             _id: this._id,
             email: this.email,
@@ -93,7 +92,7 @@ userSchema.methods.generateAccessToken = async function () {
     )
 }
 
-userSchema.methods.generateTemporaryToken = async function () {
+userSchema.methods.generateTemporaryToken = function () {
     const unHashedToken = crypto.randomBytes(20).toString("hex");
 
     const hashedToken = crypto

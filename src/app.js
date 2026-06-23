@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { SET_LIMIT } from "./utils/constant.js";
+import authRouter from "./routes/auth.route.js";
 
 const app = express();
 
@@ -18,6 +19,6 @@ app.use(cors({
     credentials: true
 }))
 
-
+app.use("/api/v1/users", authRouter);
 
 export default app;
