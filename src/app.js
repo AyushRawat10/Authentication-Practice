@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { SET_LIMIT } from "./utils/constant.js";
 import authRouter from "./routes/auth.route.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true
 }))
+app.use(cookieParser());
 
 app.use("/api/v1/users", authRouter);
 
