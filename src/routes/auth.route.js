@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   emailVerification,
+  forgotPassword,
   getCurrentUser,
   loginUser,
   logoutUser,
@@ -19,5 +20,6 @@ router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/verify-email/:verificationToken").get(emailVerification);
 router.route("/resend-email-verification").post(verifyJWT, resendEmailVerification);
 router.route("/refresh-token").post(refreshAccessToken);
+router.route("/reset-password").post(forgotPassword);
 
 export default router;
