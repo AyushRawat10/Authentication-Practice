@@ -8,7 +8,7 @@ import {
   forgotPasswordMailgenContent,
 } from "../utils/mail.js";
 import jwt from "jsonwebtoken";
-import { use } from "react";
+import crypto from "crypto";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -327,7 +327,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   const { resetToken } = req.params;
   const { newPassword } = req.body;
 
-  const hashedToken = crypto.hash("sha256").update(resetToken).digest("hex");
+  const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
   const user = await User.findOne({
     forgotPasswordToken: hashedToken,
@@ -344,7 +344,32 @@ const resetPassword = asyncHandler(async (req, res) => {
 
   await user.save({ validateBeforeSave: false });
 
-  return res.status(200).json(new ApiResponse(200, {}, "Password reset successfully"))
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password reset successfully"));
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  const user = await User.findById(req.user?._id);
+
+  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+
+  if (!isPasswordValid) {
+    throw new ApiError(400, "Invalid old password");
+  }
+
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200, 
+      {}, 
+      "Password changed successfully"
+    ));
 });
 
 export {
@@ -356,4 +381,6 @@ export {
   resendEmailVerification,
   refreshAccessToken,
   forgotPassword,
+  resetPassword,
+  changePassword
 };
